@@ -18,15 +18,41 @@ class linear_model
     int tot_features = 0;
 
     
-    // double derivative_sum_w(double w, double b)
-    // {
-        
-    // }
+    double derivative_sum_w(vector<double> w, double b, int curr_w_pos)
+    {
+        double error = 0;
+        for(int i=0; i<this->size; i++)                                 // Select data row i
+        {
+            double term_sum = 0;
+            for(int j=0; j<this->features.size(); j++)                  // Select feature j
+            {
+                // cout<<w[j]*features[j][i]<<" + ";
+                term_sum += w[j]*features[j][i];
+            }
+            term_sum += (b-label[i]);
+            // cout<<b<<" - "<<label[i]<<" all* "<<this->features[curr_w_pos][i]<<" = "<<term_sum*this->features[curr_w_pos][i]<<endl;
+            error += term_sum*this->features[curr_w_pos][i];
+        }
+        return error/(double)this->size;
+    }
 
-    // double derivative_sum_b(double w, double b)
-    // {
-        
-    // }
+    double derivative_sum_b(vector<double> w, double b)
+    {
+        double error = 0;
+        for(int i=0; i<this->size; i++)                                 // Select data row i
+        {
+            double term_sum = 0;
+            for(int j=0; j<this->features.size(); j++)                  // Select feature j
+            {
+                cout<<w[j]*features[j][i]<<" + ";
+                term_sum += w[j]*features[j][i];
+            }
+            term_sum += (b-label[i]);
+            cout<<b<<" - "<<label[i]<<" = "<<term_sum<<endl;
+            error += term_sum;
+        }
+        return error/(double)this->size;
+    }
 
     public:
 
@@ -104,7 +130,10 @@ int main()
     model.show_data();
     // model.gradient_descent(0.0001);
 
-    cout<<model.cost({1, 1, 1}, 0);
+    // cout<<model.cost({1, 1, 1}, 0);
+
+    // cout<<model.derivative_sum_w({1, 1, 1}, 0, 0)<<endl;
+    cout<<model.derivative_sum_b({1, 1, 1}, 0)<<endl;
 
     return 0;
 }

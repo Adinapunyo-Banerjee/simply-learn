@@ -39,7 +39,7 @@ class linear_model
         double w = 0, b = 0;
         double change = 1;
         double previous_cost = cost(w, b);
-        while(change>=0.00001)
+        while(change>=0.0001)
         {
             double _w = w - learning_rate*derivative_sum_w(w, b);
             double _b = b - learning_rate*derivative_sum_b(w, b);
@@ -102,7 +102,7 @@ int main()
 
     linear_model model(f, b);
     model.show_data();
-    model.gradient_descent(0.0001);
+    model.gradient_descent(0.001);
 
     cout<<model.predict(1.5);
 
