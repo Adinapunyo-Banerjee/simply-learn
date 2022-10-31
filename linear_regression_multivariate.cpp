@@ -44,11 +44,11 @@ class linear_model
             double term_sum = 0;
             for(int j=0; j<this->features.size(); j++)                  // Select feature j
             {
-                cout<<w[j]*features[j][i]<<" + ";
+                // cout<<w[j]*features[j][i]<<" + ";
                 term_sum += w[j]*features[j][i];
             }
             term_sum += (b-label[i]);
-            cout<<b<<" - "<<label[i]<<" = "<<term_sum<<endl;
+            // cout<<b<<" - "<<label[i]<<" = "<<term_sum<<endl;
             error += term_sum;
         }
         return error/(double)this->size;
@@ -74,10 +74,27 @@ class linear_model
     }
 
 
-    // void gradient_descent(double learning_rate)
-    // {
-        
-    // }
+    void gradient_descent(double learning_rate)
+    {
+        vector<double> w(this->features.size());
+        double b = 0;
+        int iter = 1000;
+        while(iter--)
+        {
+            vector<double> new_w(this->features.size());
+            for(int i=0; i<this->features.size(); i++)
+            {
+                new_w[i] = w[i] - learning_rate*derivative_sum_w(w, b, i);
+                cout<<new_w[i]<<" ";
+            }
+            double _b = b - learning_rate*derivative_sum_b(w, b);
+            cout<<_b<<endl;
+            w = new_w;
+            b = _b;
+        }
+        this->w = w;
+        this->b = b;
+    }
 
     linear_model(vector<vector<double>> features, vector<double> label)
     {
@@ -87,10 +104,13 @@ class linear_model
         this->tot_features = features.size();
     }
 
-    // double predict(double feature)
-    // {
-        
-    // }
+    double predict(vector<double> features)
+    {
+        double ans = 0;
+        for(int i=0; i<this->features.size(); i++) ans += this->w[i]*features[i];
+        ans += this->b;
+        return ans;
+    }
 
     bool initialise_data(vector<vector<double>> features, vector<double> label)
     {
@@ -124,16 +144,18 @@ int main()
         {2, 2, 2},
         {3, 3, 3}
     };
-    vector<double> label = {2, 3, 1};
+    vector<double> label = {1, 1, 1};
 
     linear_model model(features, label);
     model.show_data();
-    // model.gradient_descent(0.0001);
+    model.gradient_descent(0.001);
+
+    cout<<model.predict({1, 2, 3});
 
     // cout<<model.cost({1, 1, 1}, 0);
 
     // cout<<model.derivative_sum_w({1, 1, 1}, 0, 0)<<endl;
-    cout<<model.derivative_sum_b({1, 1, 1}, 0)<<endl;
+    // cout<<model.derivative_sum_b({1, 1, 1}, 0)<<endl;
 
     return 0;
 }
