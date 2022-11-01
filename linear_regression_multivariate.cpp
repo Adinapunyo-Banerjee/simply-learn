@@ -78,22 +78,23 @@ class linear_model
     {
         vector<double> w(this->features.size());
         double b = 0;
-        int iter = 1000;
+        int iter = 100000;
         while(iter--)
         {
             vector<double> new_w(this->features.size());
             for(int i=0; i<this->features.size(); i++)
             {
                 new_w[i] = w[i] - learning_rate*derivative_sum_w(w, b, i);
-                cout<<new_w[i]<<" ";
+                // cout<<new_w[i]<<" ";
             }
             double _b = b - learning_rate*derivative_sum_b(w, b);
-            cout<<_b<<endl;
+            // cout<<_b<<endl;
             w = new_w;
             b = _b;
         }
         this->w = w;
         this->b = b;
+        this->trained = true;
     }
 
     linear_model(vector<vector<double>> features, vector<double> label)
@@ -140,17 +141,17 @@ class linear_model
 int main()
 {
     vector<vector<double>> features = {
-        {1, 1, 1},
-        {2, 2, 2},
-        {3, 3, 3}
+        {6.0, 6.0, 5.0, 2.0, 7.0, 3.0, 10.0, 11.0},
+        {8.0, 8.0, 6.0, 10.0, 9.0, 7.0, 8.0, 7.0},
+        {9, 6, 7, 10, 6, 10, 7, 8}
     };
-    vector<double> label = {1, 1, 1};
+    vector<double> label = {50000, 45000, 60000, 65000, 70000, 62000, 72000, 80000};
 
     linear_model model(features, label);
-    model.show_data();
+    // model.show_data();
     model.gradient_descent(0.001);
 
-    cout<<model.predict({1, 2, 3});
+    cout<<model.predict({2, 9, 6});
 
     // cout<<model.cost({1, 1, 1}, 0);
 
