@@ -1,13 +1,14 @@
 #include<iostream>
 #include<bits/stdc++.h>
-
+#define INF 2147483646
 using namespace std;
 
-class linear_model
+class logistic_model
 {
     private:
+    double e = 2.713;
     vector<vector<double>> features;
-    vector<double> label;
+    vector<bool> label;
 
     bool trained = false;
 
@@ -29,9 +30,9 @@ class linear_model
                 // cout<<w[j]*features[j][i]<<" + ";
                 term_sum += w[j]*features[j][i];
             }
-            term_sum += (b-label[i]);
-            // cout<<b<<" - "<<label[i]<<" all* "<<this->features[curr_w_pos][i]<<" = "<<term_sum*this->features[curr_w_pos][i]<<endl;
-            error += term_sum*this->features[curr_w_pos][i];
+            term_sum += b;
+            double f = (double)1/(double)(1 + pow(e, -1*term_sum));
+            error += (f-(double)this->label[i])*this->features[curr_w_pos][i];
         }
         return error/(double)this->size;
     }
@@ -47,28 +48,11 @@ class linear_model
                 // cout<<w[j]*features[j][i]<<" + ";
                 term_sum += w[j]*features[j][i];
             }
-            term_sum += (b-label[i]);
-            // cout<<b<<" - "<<label[i]<<" = "<<term_sum<<endl;
-            error += term_sum;
+            term_sum += b;
+            double f = (double)1/(double)(1 + pow(e, -1*term_sum));
+            error += f-(double)this->label[i];
         }
         return error/(double)this->size;
-    }
-
-    double cost(vector<double> w, double b)
-    {
-        double tot_squared_error = 0;
-        for(int entry = 0; entry<size; entry++)
-        {
-            double dot_product = 0;
-            for(int feature = 0; feature<tot_features; feature++)
-            {
-                dot_product += w[feature]*this->features[feature][entry];
-            }
-            double error = dot_product - this->label[entry] - b;
-            tot_squared_error += error*error;
-            cout<<error*error<<endl;
-        }
-        return tot_squared_error/(double)(2*size);
     }
 
     public:
@@ -96,7 +80,7 @@ class linear_model
         this->trained = true;
     }
 
-    linear_model(vector<vector<double>> features, vector<double> label)
+    logistic_model(vector<vector<double>> features, vector<bool> label)
     {
         this->features = features;
         this->label = label;
@@ -109,10 +93,10 @@ class linear_model
         double ans = 0;
         for(int i=0; i<this->features.size(); i++) ans += this->w[i]*features[i];
         ans += this->b;
-        return ans;
+        return (double)1/(double)(1 + pow(e, -1*ans));
     }
 
-    bool initialise_data(vector<vector<double>> features, vector<double> label)
+    bool initialise_data(vector<vector<double>> features, vector<bool> label)
     {
         this->features = features;
         this->label = label;
@@ -140,22 +124,21 @@ class linear_model
 int main()
 {
     vector<vector<double>> features = {
-        {6.0, 6.0, 5.0, 2.0, 7.0, 3.0, 10.0, 11.0},
-        {8.0, 8.0, 6.0, 10.0, 9.0, 7.0, 8.0, 7.0},
-        {9, 6, 7, 10, 6, 10, 7, 8}
+        {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0}
     };
-    vector<double> label = {50000, 45000, 60000, 65000, 70000, 62000, 72000, 80000};
+    vector<bool> label = {0, 0, 0, 0, 1, 1, 1, 1};
 
-    linear_model model(features, label);
+    logistic_model model(features, label);
     // model.show_data();
-    model.gradient_descent(0.001);
+    model.gradient_descent(0.01);
 
-    cout<<model.predict({2, 9, 6});
+    for(int i=1; i<label.size(); i++) cout<<model.predict({(double)i})<<endl;
 
     // cout<<model.cost({1, 1, 1}, 0);
 
     // cout<<model.derivative_sum_w({1, 1, 1}, 0, 0)<<endl;
     // cout<<model.derivative_sum_b({1, 1, 1}, 0)<<endl;
+
 
     return 0;
 }
